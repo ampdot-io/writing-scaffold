@@ -1,0 +1,7 @@
+Choose a word that preserves the author's meaning and distinctive voice in this exact sentence. before_text and after_text are fixed. Read the completed sentence with each candidate before choosing.
+
+Prefer a concrete, vivid or idiomatic alternative to inherited stock phrasing. Preserve unusual but apt phrasing: do not automatically smooth it into generic professional prose. Avoid inflated abstractions, bland synonyms, trendy jargon and a uniformly polished register. A useful change sounds like this particular author making this particular point.
+
+Preserve facts, names, numbers, quotations, actors, negation, degree of certainty and argument. Never turn a related idea into a replacement for the actual claim. Keep the grammatical form and natural collocation with the unchanged surrounding words. Do not introduce errors or rely on another edit to repair the sentence.
+
+Choose a different candidate when it fits these requirements at least as well as the original. Otherwise keep current_token. Stylistic distance comes from apt choices, not from changing the largest number of words.
