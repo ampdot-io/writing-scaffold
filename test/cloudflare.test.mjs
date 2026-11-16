@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import vm from 'node:vm';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { logRequest } from '../dist/request-log.js';
@@ -140,4 +141,28 @@ test('setup content escapes URLs and distinguishes document requests from MCP re
   assert.match(html, /Settings → MCP servers → Add server/);
   assert.match(html, /Customize → Connectors/);
   assert.match(html, /~\/\.pi\/agent\/mcp\.json/);
+});
+
+
+test('benchmark resets to Gemini on startup and page restore but permits other views', async () => {
+  const html = await readFile(join(root, 'web/pangram-miss-benchmark.html'), 'utf8');
+  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+  const handlers = {};
+  const selector = { value: 'pangram_mcp_n60_seed42', addEventListener: (event, handler) => { handlers[event] = handler; } };
+  const main = { innerHTML: '' };
+  const context = vm.createContext({
+    document: { getElementById: () => selector, querySelector: () => main },
+    addEventListener: (event, handler) => { handlers[event] = handler; },
+  });
+  vm.runInContext(script, context);
+  const gemini = 'gemini_4_argon_high_initial_n100_seed20261031';
+  assert.equal(selector.value, gemini);
+  assert.match(main.innerHTML, /Gemini 4 Argon high/);
+  const geminiView = main.innerHTML;
+  selector.value = 'pangram_mcp_n60_seed42';
+  handlers.change();
+  assert.match(main.innerHTML, /Claude Opus 5\.5/);
+  handlers.pageshow();
+  assert.equal(selector.value, gemini);
+  assert.equal(main.innerHTML, geminiView);
 });

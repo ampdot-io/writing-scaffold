@@ -136,5 +136,7 @@ The public "More information" link opens `/pangram-miss-benchmark.html` on the
 same deployment. It serves the static copy in `web/pangram-miss-benchmark.html`,
 with request logging enabled. The snapshot was copied on 2026-11-16 from
 [AI Detection Eval](https://github.com/ampdot-io/ai-detection-eval/blob/main/release/pangram-miss-benchmark.html)
-and is not automatically synchronized. Its SHA-256 is
-`3056ea8fe1338350a5954cc9c3daff5d68e7e704cdf39b0f9868f7ed596a75fe`.
+and is not automatically synchronized. The hosted copy opens on Gemini 4 Argon
+high (100 prompts), including after a browser restores an earlier selection.
+Other generator views remain selectable. Its SHA-256 is
+`4ebbca74c9889fb7c29a74fdbe4b9dfb86715c201819a4cf9a992e76d1dd71f7`.
