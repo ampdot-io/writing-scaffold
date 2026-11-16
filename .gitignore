@@ -96,3 +96,6 @@ __pycache__/
 !/scripts/log-viewer.mjs
 !/scripts/log-viewer/
 !/test/log-viewer.test.mjs
+
+!/scripts/render-benchmark-copy.mjs
+!/scripts/benchmark-copy-data.json

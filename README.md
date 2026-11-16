@@ -139,7 +139,7 @@ with request logging enabled. The snapshot was copied on 2026-11-16 from
 and is not automatically synchronized. The data, figures, and model views come from GitHub; the report copy has been revised locally.
 its selected default is Gemini 4 Argon high (100 prompts). Other generator views
 remain selectable. Its SHA-256 is
-`a14c8019f3368afc9a8ca8fdbb53a60e59d4bd602032b55425419de0679d1fc4`.
+`bfb77c2c1cd4e1f8d31fbc2d27fe64d3843d7eb087aadd50c2641df34cf86d25`.
 
 ### Private live topic viewer
 
@@ -160,3 +160,8 @@ foreign hosts and cross-site requests.
 Optional environment variables: `WRITING_LOG_PORT`, `WRITING_LOG_CACHE`, and
 `WRITING_LOG_SEED` (a private prior audit snapshot containing `{records:[{key,record}]}`).
 Keep the viewer process running while viewing it. Stop it with Ctrl-C.
+
+Report copy is shared across all seven models. Edit `reportCopy` in
+`scripts/render-benchmark-copy.mjs`, then run `node scripts/render-benchmark-copy.mjs`
+to update every view. Model-specific counts and provenance live in
+`scripts/benchmark-copy-data.json`; refresh them when benchmark data changes.
