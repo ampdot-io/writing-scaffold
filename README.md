@@ -136,10 +136,10 @@ The public "More information" link opens `/pangram-miss-benchmark.html` on the
 same deployment. It serves the static copy in `web/pangram-miss-benchmark.html`,
 with request logging enabled. The snapshot was copied on 2026-11-16 from
 [AI Detection Eval](https://github.com/ampdot-io/ai-detection-eval/blob/main/release/pangram-miss-benchmark.html)
-and is not automatically synchronized. This is the unmodified GitHub version;
+and is not automatically synchronized. The data, figures, and model views come from GitHub; the report copy has been revised locally.
 its selected default is Gemini 4 Argon high (100 prompts). Other generator views
 remain selectable. Its SHA-256 is
-`c1befdac43def1dc8394db62da752b38f5abadfd98bd987626f28d61b731b757`.
+`a14c8019f3368afc9a8ca8fdbb53a60e59d4bd602032b55425419de0679d1fc4`.
 
 ### Private live topic viewer
 
