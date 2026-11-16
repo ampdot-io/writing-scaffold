@@ -7,6 +7,7 @@ import { test } from 'node:test';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { logRequest } from '../dist/request-log.js';
+import { isSetupRequest, renderSetupPage } from '../dist/setup-page.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
@@ -53,6 +54,25 @@ test('public Worker serves both MCP versions, excludes rewriting, and persists e
     assert.equal((await dispatch('https://writing-scaffold.test/mcp', { headers: { origin: 'https://other.test' } })).status, 403);
     assert.equal((await dispatch('https://writing-scaffold.test/?token=secret', { headers: { Authorization: 'Bearer secret', Cookie: 'secret' } })).status, 200);
     assert.equal((await dispatch('https://writing-scaffold.test/mcp', { method: 'POST', body: '{', headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream' } })).status, 400);
+    for (const accept of [undefined, '*/*', 'text/html', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']) {
+      const page = await dispatch('https://writing-scaffold.test/mcp', { headers: accept ? { accept } : {} });
+      assert.equal(page.status, 200);
+      assert.match(page.headers.get('content-type'), /text\/html/);
+      const html = await page.text();
+      for (const agent of ['pi', 'claude', 'codex']) for (const mode of ['cli', 'gui']) {
+        assert.ok(html.includes('data-setup="' + agent + '-' + mode + '"'));
+      }
+      assert.ok(html.includes('https://writing-scaffold.test/mcp'));
+      assert.ok(html.includes('Requests, including their bodies, are logged.'));
+    }
+    const head = await dispatch('https://writing-scaffold.test/mcp', { method: 'HEAD' });
+    assert.equal(head.status, 200);
+    assert.equal(await head.text(), '');
+    for (const headers of [{ accept: 'text/event-stream' }, { 'mcp-protocol-version': '2025-11-25' }, { 'mcp-session-id': 'session' }]) {
+      const protocolGet = await dispatch('https://writing-scaffold.test/mcp', { headers });
+      assert.equal(protocolGet.status, 405);
+      assert.doesNotMatch(protocolGet.headers.get('content-type') ?? '', /text\/html/);
+    }
     const bucket = await mf.getR2Bucket('REQUEST_LOGS');
     const objects = await bucket.list({ limit: 1000 });
     assert.equal(objects.objects.length, requests, 'each request is persisted once, including rejected requests');
@@ -89,4 +109,23 @@ test('oversized requests are rejected and their bounded prefix is logged', async
   assert.equal(response.status, 413);
   assert.equal(log.bodyTruncated, true);
   assert.equal(log.bodyBytes, 1024 * 1024);
+});
+
+
+test('setup content escapes URLs and distinguishes document requests from MCP requests', () => {
+  const base = 'https://writing-scaffold.test/mcp';
+  for (const method of ['GET', 'HEAD']) assert.equal(isSetupRequest(new Request(base, { method })), true);
+  assert.equal(isSetupRequest(new Request(base, { method: 'POST' })), false);
+  assert.equal(isSetupRequest(new Request(base, { headers: { accept: 'text/event-stream' } })), false);
+  assert.equal(isSetupRequest(new Request(base, { headers: { accept: 'text/html, text/event-stream' } })), true);
+  assert.equal(isSetupRequest(new Request(base, { headers: { 'MCP-Protocol-Version': '2026-07-28', accept: 'text/html' } })), false);
+  const html = renderSetupPage(base + '?x=<script>&q="unsafe"');
+  assert.ok(html.includes('&lt;script&gt;&amp;q=&quot;unsafe&quot;'));
+  assert.ok(!html.includes('?x=<script>'));
+  assert.match(html, /claude mcp add --transport http --scope user writing-scaffold/);
+  assert.match(html, /pi mcp add writing-scaffold --url/);
+  assert.match(html, /codex mcp add writing-scaffold --url/);
+  assert.match(html, /Settings → MCP servers → Add server/);
+  assert.match(html, /Customize → Connectors/);
+  assert.match(html, /~\/\.pi\/agent\/mcp\.json/);
 });

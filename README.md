@@ -118,3 +118,14 @@ npm run deploy
 `npm test` includes the actual Workers runtime with local assets and R2, checking
 both supported MCP protocol generations, scaffold retrieval, rejected rewrite
 calls, hidden asset routes, and persistent request logs.
+
+### Public setup page
+
+Open `https://writing-scaffold.wafer4590.workers.dev/mcp` in a browser for
+Pi, Claude, and Codex installation instructions. Each agent has separate CLI
+and GUI buttons, with copyable commands or connection details. Pi's GUI option
+uses an editor for `~/.pi/agent/mcp.json` and its in-session `/mcp` panel.
+The root URL shows the same page. Browser and plain GET/HEAD requests receive
+HTML; explicit MCP protocol headers or an event-stream request continue to the
+MCP handler, so existing client connections keep working. These requests use the
+same persistent R2 logging as all other public requests.

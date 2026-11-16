@@ -1,3 +1,4 @@
+import { isSetupRequest, renderSetupPage } from './setup-page.js';
 import { logRequest } from './request-log.js';
 import type { RequestLogBucket } from './request-log.js';
 import { createMcpHandler } from '@modelcontextprotocol/server';
@@ -23,17 +24,20 @@ function getStore(assets: AssetBinding): Promise<CloudflareScaffoldStore> {
   return promise;
 }
 
-const landing = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Writing Scaffold</title><style>body{max-width:44rem;margin:15vh auto;padding:0 1.5rem;font:18px/1.6 system-ui;color:#18251e;background:#f6f7f2}h1{font-size:2.4rem;letter-spacing:-.04em}code{background:#e5e9de;padding:.2em .4em;border-radius:.25em}a{color:#315940}</style><h1>Writing Scaffold</h1><p>A library of writing examples for your MCP client.</p><p>Connect with Streamable HTTP at <a href="/mcp"><code>/mcp</code></a>.</p><p>Browse scaffolds, read complete examples, and build writing prompts.</p><p>Requests to this public service, including request bodies, are logged.</p></html>`;
 
 async function route(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     // All paths pass through this Worker, so raw build assets are never public routes.
-    if (url.pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) {
-      return new Response(request.method === 'HEAD' ? null : landing, { headers: { 'content-type': 'text/html; charset=utf-8' } });
-    }
-    if (url.pathname !== '/mcp') return new Response('Not found', { status: 404 });
+    if (url.pathname !== '/' && url.pathname !== '/mcp') return new Response('Not found', { status: 404 });
     const origin = request.headers.get('origin');
     if (origin && origin !== url.origin) return new Response('Forbidden origin', { status: 403 });
+    if ((url.pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) ||
+        (url.pathname === '/mcp' && isSetupRequest(request))) {
+      return new Response(request.method === 'HEAD' ? null : renderSetupPage(new URL('/mcp', url).href), {
+        headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' },
+      });
+    }
+    if (url.pathname !== '/mcp') return new Response('Not found', { status: 404 });
     // This endpoint has no notifications/subscriptions that need an idle stream.
     // Construct its per-request handler after assets load and close it after streaming.
     const store = await getStore(env.ASSETS);
