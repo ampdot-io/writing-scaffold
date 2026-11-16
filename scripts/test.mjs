@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 
 // Runtime tests need only the committed corpus, without acquisition archives.
 const tests = [
+  "test/cloudflare.test.mjs",
   "test/corpus.test.ts",
   "test/scaffold-tools.test.ts",
   "test/library.test.ts",

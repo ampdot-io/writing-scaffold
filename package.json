@@ -11,13 +11,15 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/build-html.mjs",
+    "build": "tsc -p tsconfig.json && node scripts/build-html.mjs && node scripts/build-cloudflare.mjs",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "test": "npm run bundle && node scripts/test.mjs",
     "config": "node scripts/mcp-config.mjs",
     "check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
-    "bundle": "npm run build && node scripts/bundle.mjs"
+    "bundle": "npm run build && node scripts/bundle.mjs",
+    "build:cloudflare": "npm run build",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@hono/node-server": "2.1.5",
@@ -31,6 +33,7 @@
     "@types/node": "22.20.5",
     "esbuild": "0.28.2",
     "tsx": "4.23.15",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "wrangler": "4.162.0"
   }
 }

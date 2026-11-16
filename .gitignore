@@ -86,3 +86,8 @@ __pycache__/
 .env
 .env.*
 !.env.example
+
+# Public Cloudflare deployment source and configuration.
+!/wrangler.jsonc
+!/scripts/build-cloudflare.mjs
+!/test/cloudflare.test.mjs

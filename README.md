@@ -81,3 +81,40 @@ They cover core behavior, filtering, pruning, rewriting with provider substitute
 full original-corpus retrieval over stdio, HTTP, the browser adapter and the
 standalone executable from an isolated directory. Historical acquisition audits
 are outside this minimal distribution.
+
+## Public Cloudflare deployment
+
+`npm run build` also builds the public Worker at `dist/cloudflare/worker.mjs`
+and splits the frozen library into private-bound assets. `npm run deploy` (or
+`npx wrangler deploy`) uses `wrangler.jsonc`, so the existing Cloudflare build
+commands `npm run build` and `npx wrangler deploy` work without dashboard changes.
+The public Streamable HTTP endpoint is
+`https://writing-scaffold.wafer4590.workers.dev/mcp`.
+
+The public Worker exposes only `write_with_scaffold`, `list_scaffolds`,
+`get_scaffold`, and `list_references`, plus the read-only MCP resources.
+Its dependency graph excludes `detemplatize`, provider credentials, the rewrite
+page, and the rewrite HTTP endpoint. The local Node server retains rewriting.
+
+Every request reaching the Worker is saved as one JSON object in the private R2
+bucket `writing-scaffold-requests`, under `YYYY-MM-DD/<timestamp>-<uuid>.json`.
+Logs include the method, URL, headers, request body, response status and duration.
+Authorization/cookie/credential headers and sensitive query parameters are
+redacted; request bodies may contain user-submitted content. Bodies up to 1 MiB
+are accepted in full. Larger requests are rejected with 413 and logged with a
+truncated 1 MiB prefix. Logs are retained with no automatic expiration, and are
+not exposed by any public route. A storage failure returns 503 instead of
+acknowledging an unlogged request. Cloudflare-rejected traffic that never reaches
+the Worker cannot be recorded by application code.
+
+Create the log bucket once before the first deployment, if it does not exist:
+
+```sh
+npx wrangler r2 bucket create writing-scaffold-requests
+npm run build
+npm run deploy
+```
+
+`npm test` includes the actual Workers runtime with local assets and R2, checking
+both supported MCP protocol generations, scaffold retrieval, rejected rewrite
+calls, hidden asset routes, and persistent request logs.

@@ -33,3 +33,10 @@ export interface ScaffoldStore {
 }
 export const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
 export const isUuid = (value: unknown): value is string => typeof value === 'string' && new RegExp(UUID_PATTERN).test(value);
+
+/** Public deployments load record text asynchronously from asset storage. */
+export type AsyncScaffoldStore = Omit<ScaffoldStore, 'getScaffold' | 'getScaffoldBySequentialId' | 'read'> & {
+  getScaffold(id: ScaffoldId): string | Promise<string>;
+  getScaffoldBySequentialId(id: number): string | Promise<string>;
+  read(uri: string): ReadResourceResult | Promise<ReadResourceResult>;
+};
