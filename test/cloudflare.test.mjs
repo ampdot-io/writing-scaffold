@@ -150,7 +150,7 @@ test('GitHub benchmark defaults to Gemini and permits other views', async () => 
   assert.ok(html.includes('value="' + gemini + '" selected'));
   const handlers = {};
   const selector = { value: gemini, addEventListener: (event, handler) => { handlers[event] = handler; } };
-  const main = { innerHTML: html.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1] };
+  const main = { addEventListener: () => {}, innerHTML: html.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1] };
   assert.match(main.innerHTML, /Gemini 4 Argon high/);
   vm.runInNewContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], {
     document: { getElementById: () => selector, querySelector: () => main },
@@ -161,4 +161,28 @@ test('GitHub benchmark defaults to Gemini and permits other views', async () => 
   selector.value = gemini;
   handlers.change();
   assert.match(main.innerHTML, /Gemini 4 Argon high/);
+});
+
+test('every model prompt toggles its escaped saved outputs, including below-ratio rows', async () => {
+  const html = await readFile(join(root, 'web/pangram-miss-benchmark.html'), 'utf8');
+  const handlers = {};
+  const selector = { value: '', addEventListener: (event, handler) => { handlers[event] = handler; } };
+  let expanded = 'false';
+  const detail = { hidden: true };
+  const button = { getAttribute: key => key === 'aria-controls' ? 'output-0' : expanded, setAttribute: (_, value) => { expanded = value; } };
+  const row = { querySelector: () => button, classList: { toggle() {} } };
+  const main = { innerHTML: '', addEventListener: (event, handler) => { handlers[event] = handler; } };
+  const context = vm.createContext({ document: { getElementById: id => id === 'run-pick' ? selector : detail, querySelector: () => main } });
+  vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], context);
+  for (const key of vm.runInContext('Object.keys(views)', context)) {
+    selector.value = key; handlers.change();
+    assert.match(main.innerHTML, /Initial output/);
+    const prompts = [...main.innerHTML.matchAll(/class="prompt-toggle"/g)];
+    const rows = [...main.innerHTML.matchAll(/<tr id="doc-\d+"/g)];
+    assert.equal(prompts.length, rows.length);
+    assert.equal([...main.innerHTML.matchAll(/class="detail" hidden/g)].length, rows.length);
+  }
+  const event = { target: { closest: css => css === '.prompt-toggle' ? button : row } };
+  handlers.click(event); assert.equal(expanded, 'true'); assert.equal(detail.hidden, false);
+  handlers.click(event); assert.equal(expanded, 'false'); assert.equal(detail.hidden, true);
 });

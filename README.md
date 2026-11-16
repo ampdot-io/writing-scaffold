@@ -139,7 +139,7 @@ with request logging enabled. The snapshot was copied on 2026-11-16 from
 and is not automatically synchronized. The data, figures, and model views come from GitHub; the report copy has been revised locally.
 its selected default is Gemini 4 Argon high (100 prompts). Other generator views
 remain selectable. Its SHA-256 is
-`bfb77c2c1cd4e1f8d31fbc2d27fe64d3843d7eb087aadd50c2641df34cf86d25`.
+`f57aaafc3e7ef7f5536728ec5c80a5afea40ddc19b4486457abc84293977597a`.
 
 ### Private live topic viewer
 
@@ -165,3 +165,8 @@ Report copy is shared across all seven models. Edit `reportCopy` in
 `scripts/render-benchmark-copy.mjs`, then run `node scripts/render-benchmark-copy.mjs`
 to update every view. Model-specific counts and provenance live in
 `scripts/benchmark-copy-data.json`; refresh them when benchmark data changes.
+
+The document table includes saved initial and final retry output bodies from the
+local benchmark archive. Click a prompt (or its row) to expand or collapse them.
+Missing completed outputs are labeled explicitly. Output bodies are escaped as
+plain text; tool traces, credentials, and raw score records are not embedded.
