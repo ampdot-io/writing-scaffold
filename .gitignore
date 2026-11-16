@@ -91,3 +91,8 @@ __pycache__/
 !/wrangler.jsonc
 !/scripts/build-cloudflare.mjs
 !/test/cloudflare.test.mjs
+
+# Private local topic viewer; request data stays untracked.
+!/scripts/log-viewer.mjs
+!/scripts/log-viewer/
+!/test/log-viewer.test.mjs

@@ -19,7 +19,8 @@
     "check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
     "bundle": "npm run build && node scripts/bundle.mjs",
     "build:cloudflare": "npm run build",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "logs:viewer": "node scripts/log-viewer.mjs"
   },
   "dependencies": {
     "@hono/node-server": "2.1.5",

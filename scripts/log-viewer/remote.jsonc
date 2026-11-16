@@ -1,0 +1,7 @@
+{
+  "name": "writing-scaffold-private-log-reader",
+  "account_id": "68ebe6f4e26cdedde89ef428269bfb64",
+  "compatibility_date": "2026-11-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "r2_buckets": [{ "binding": "REQUEST_LOGS", "bucket_name": "writing-scaffold-requests", "remote": true }]
+}

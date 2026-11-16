@@ -136,7 +136,27 @@ The public "More information" link opens `/pangram-miss-benchmark.html` on the
 same deployment. It serves the static copy in `web/pangram-miss-benchmark.html`,
 with request logging enabled. The snapshot was copied on 2026-11-16 from
 [AI Detection Eval](https://github.com/ampdot-io/ai-detection-eval/blob/main/release/pangram-miss-benchmark.html)
-and is not automatically synchronized. The hosted copy opens on Gemini 4 Argon
-high (100 prompts), including after a browser restores an earlier selection.
-Other generator views remain selectable. Its SHA-256 is
-`4ebbca74c9889fb7c29a74fdbe4b9dfb86715c201819a4cf9a992e76d1dd71f7`.
+and is not automatically synchronized. This is the unmodified GitHub version;
+its selected default is Gemini 4 Argon high (100 prompts). Other generator views
+remain selectable. Its SHA-256 is
+`c1befdac43def1dc8394db62da752b38f5abadfd98bd987626f28d61b731b757`.
+
+### Private live topic viewer
+
+Run `npm run logs:viewer` and open `http://127.0.0.1:54101`. Sign in with
+`npx wrangler login` first if necessary. The viewer reads the private production
+R2 bucket through your Cloudflare account. It shows the exact topic and objective
+of every `write_with_scaffold` call, including repeats and tests, newest first.
+Search, pause the display, or export the full loaded history as JSON.
+
+The initial scan loads history; subsequent checks run every five seconds and
+stream new cards into the browser. A five-minute overlap catches delayed log
+writes. Failed reads are retried before advancing the checkpoint. A local cache
+in `.local/topic-viewer/` avoids downloading old records again and contains only
+object keys and displayed fields. No logs or credentials are included in Git or
+served by the public Worker. The viewer binds only to this computer and rejects
+foreign hosts and cross-site requests.
+
+Optional environment variables: `WRITING_LOG_PORT`, `WRITING_LOG_CACHE`, and
+`WRITING_LOG_SEED` (a private prior audit snapshot containing `{records:[{key,record}]}`).
+Keep the viewer process running while viewing it. Stop it with Ctrl-C.

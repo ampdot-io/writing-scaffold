@@ -144,25 +144,21 @@ test('setup content escapes URLs and distinguishes document requests from MCP re
 });
 
 
-test('benchmark resets to Gemini on startup and page restore but permits other views', async () => {
+test('GitHub benchmark defaults to Gemini and permits other views', async () => {
   const html = await readFile(join(root, 'web/pangram-miss-benchmark.html'), 'utf8');
-  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
-  const handlers = {};
-  const selector = { value: 'pangram_mcp_n60_seed42', addEventListener: (event, handler) => { handlers[event] = handler; } };
-  const main = { innerHTML: '' };
-  const context = vm.createContext({
-    document: { getElementById: () => selector, querySelector: () => main },
-    addEventListener: (event, handler) => { handlers[event] = handler; },
-  });
-  vm.runInContext(script, context);
   const gemini = 'gemini_4_argon_high_initial_n100_seed20261031';
-  assert.equal(selector.value, gemini);
+  assert.ok(html.includes('value="' + gemini + '" selected'));
+  const handlers = {};
+  const selector = { value: gemini, addEventListener: (event, handler) => { handlers[event] = handler; } };
+  const main = { innerHTML: html.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1] };
   assert.match(main.innerHTML, /Gemini 4 Argon high/);
-  const geminiView = main.innerHTML;
+  vm.runInNewContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], {
+    document: { getElementById: () => selector, querySelector: () => main },
+  });
   selector.value = 'pangram_mcp_n60_seed42';
   handlers.change();
   assert.match(main.innerHTML, /Claude Opus 5\.5/);
-  handlers.pageshow();
-  assert.equal(selector.value, gemini);
-  assert.equal(main.innerHTML, geminiView);
+  selector.value = gemini;
+  handlers.change();
+  assert.match(main.innerHTML, /Gemini 4 Argon high/);
 });
