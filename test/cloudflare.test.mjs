@@ -17,7 +17,7 @@ test('public Worker serves both MCP versions, excludes rewriting, and persists e
     name: 'writing-scaffold', modules: true,
     scriptPath: join(root, 'dist/cloudflare/worker.mjs'),
     compatibilityDate: '2026-11-16', compatibilityFlags: ['nodejs_compat'],
-    assets: { directory: join(root, 'dist/cloudflare/assets'), binding: 'ASSETS', run_worker_first: true, routerConfig: { has_user_worker: true } },
+    assets: { directory: join(root, 'dist/cloudflare/assets'), binding: 'ASSETS', run_worker_first: true, routerConfig: { has_user_worker: true }, assetConfig: { html_handling: 'none' } },
     r2Buckets: { REQUEST_LOGS: 'writing-scaffold-requests' }, r2Persist: dir,
   }));
   let requests = 0;
@@ -73,6 +73,18 @@ test('public Worker serves both MCP versions, excludes rewriting, and persists e
       assert.equal(protocolGet.status, 405);
       assert.doesNotMatch(protocolGet.headers.get('content-type') ?? '', /text\/html/);
     }
+    const benchmarkUrl = 'https://writing-scaffold.test/pangram-miss-benchmark.html';
+    const benchmark = await dispatch(benchmarkUrl);
+    assert.equal(benchmark.status, 200);
+    assert.match(benchmark.headers.get('content-type'), /text\/html/);
+    assert.equal(await benchmark.text(), await readFile(join(root, 'web/pangram-miss-benchmark.html'), 'utf8'));
+    const benchmarkHead = await dispatch(benchmarkUrl, { method: 'HEAD' });
+    assert.equal(benchmarkHead.status, 200);
+    assert.equal(await benchmarkHead.text(), '');
+    const benchmarkPost = await dispatch(benchmarkUrl, { method: 'POST' });
+    assert.equal(benchmarkPost.status, 405);
+    assert.equal(benchmarkPost.headers.get('allow'), 'GET, HEAD');
+    assert.ok(renderSetupPage('https://writing-scaffold.test/mcp').includes('href="/pangram-miss-benchmark.html"'));
     const bucket = await mf.getR2Bucket('REQUEST_LOGS');
     const objects = await bucket.list({ limit: 1000 });
     assert.equal(objects.objects.length, requests, 'each request is persisted once, including rejected requests');

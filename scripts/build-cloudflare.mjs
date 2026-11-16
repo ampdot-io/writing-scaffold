@@ -8,6 +8,9 @@ import { loadOriginalBytes, loadImportedBytes } from '../dist/runtime-assets.js'
 const root = new URL('../', import.meta.url);
 const destination = new URL('../dist/cloudflare/assets/', import.meta.url);
 await mkdir(new URL('__library/records/', destination), { recursive: true });
+// Keep the public benchmark snapshot byte-for-byte identical to its source.
+await writeFile(new URL('pangram-miss-benchmark.html', destination),
+  await readFile(new URL('../web/pangram-miss-benchmark.html', import.meta.url)));
 const originalBytes = await loadOriginalBytes();
 const importedBytes = await loadImportedBytes();
 const library = await loadBundledLibrary(new Corpus(originalBytes));

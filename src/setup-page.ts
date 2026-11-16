@@ -75,7 +75,7 @@ ${panels.map((panel, index) => `<section class="setup-panel" id="${panel.id}" ar
 </section>
 <div class="try-it"><strong>Then, try this</strong><p>“Use Writing Scaffold to write a post advocating for open borders”</p></div>
 </main>
-<footer><p>Public, read-only library. Requests, including their bodies, are logged.</p><nav class="footer-links" aria-label="Related links"><a href="https://github.com/ampdot-io/ai-detection-eval" target="_blank" rel="noreferrer">View on GitHub ↗</a><a href="https://github.com/ampdot-io/ai-detection-eval/blob/main/release/pangram-miss-benchmark.html" target="_blank" rel="noreferrer">More information ↗</a></nav></footer>
+<footer><p>Public, read-only library. Requests, including their bodies, are logged.</p><nav class="footer-links" aria-label="Related links"><a href="https://github.com/ampdot-io/ai-detection-eval" target="_blank" rel="noreferrer">View on GitHub ↗</a><a href="/pangram-miss-benchmark.html" target="_blank" rel="noreferrer">More information ↗</a></nav></footer>
 <div id="copy-status" class="sr-only" role="status" aria-live="polite"></div>
 <noscript><style>.setup-panel[hidden]{display:block!important}.setup-panel{margin:20px 0}.agent-grid,.copy-button{display:none!important}</style></noscript>
 <script>

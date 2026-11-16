@@ -129,3 +129,12 @@ The root URL shows the same page. Browser and plain GET/HEAD requests receive
 HTML; explicit MCP protocol headers or an event-stream request continue to the
 MCP handler, so existing client connections keep working. These requests use the
 same persistent R2 logging as all other public requests.
+
+### Hosted benchmark snapshot
+
+The public "More information" link opens `/pangram-miss-benchmark.html` on the
+same deployment. It serves the static copy in `web/pangram-miss-benchmark.html`,
+with request logging enabled. The snapshot was copied on 2026-11-16 from
+[AI Detection Eval](https://github.com/ampdot-io/ai-detection-eval/blob/main/release/pangram-miss-benchmark.html)
+and is not automatically synchronized. Its SHA-256 is
+`977626eaca4268a048aeacff0c7f0666eb39926a3956e639878b657d16009d20`.

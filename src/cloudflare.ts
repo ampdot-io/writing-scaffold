@@ -28,6 +28,12 @@ function getStore(assets: AssetBinding): Promise<CloudflareScaffoldStore> {
 async function route(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     // All paths pass through this Worker, so raw build assets are never public routes.
+    if (url.pathname === '/pangram-miss-benchmark.html') {
+      if (request.method !== 'GET' && request.method !== 'HEAD') {
+        return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } });
+      }
+      return env.ASSETS.fetch(request);
+    }
     if (url.pathname !== '/' && url.pathname !== '/mcp') return new Response('Not found', { status: 404 });
     const origin = request.headers.get('origin');
     if (origin && origin !== url.origin) return new Response('Forbidden origin', { status: 403 });
