@@ -137,4 +137,4 @@ same deployment. It serves the static copy in `web/pangram-miss-benchmark.html`,
 with request logging enabled. The snapshot was copied on 2026-11-16 from
 [AI Detection Eval](https://github.com/ampdot-io/ai-detection-eval/blob/main/release/pangram-miss-benchmark.html)
 and is not automatically synchronized. Its SHA-256 is
-`977626eaca4268a048aeacff0c7f0666eb39926a3956e639878b657d16009d20`.
+`3056ea8fe1338350a5954cc9c3daff5d68e7e704cdf39b0f9868f7ed596a75fe`.
