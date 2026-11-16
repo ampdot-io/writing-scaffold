@@ -73,7 +73,7 @@ export function renderSetupPage(endpoint: string): string {
 ].map(([id, name, symbol, kind]) => `<article class="agent-card${id === 'pi' ? ' is-selected' : ''}" data-agent="${id}"><div class="agent-heading"><span class="agent-symbol" aria-hidden="true">${symbol}</span><h3>${name}</h3><span class="agent-kind">${kind}</span></div><div class="mode-buttons">${['cli', 'gui'].map(mode => `<button type="button" data-setup="${id}-${mode}" aria-controls="${id}-${mode}" aria-label="${name} ${mode.toUpperCase()}" aria-pressed="${id === 'pi' && mode === 'cli'}">${mode.toUpperCase()}</button>`).join('')}</div></article>`).join('')}</div>
 ${panels.map((panel, index) => `<section class="setup-panel" id="${panel.id}" aria-labelledby="${panel.id}-title"${index ? ' hidden' : ''}><div class="panel-heading"><h2 id="${panel.id}-title">${panel.agent} <span aria-hidden="true">/</span> ${panel.mode}</h2><span>Connection guide</span></div><div class="panel-body"><p class="intro">${panel.intro}</p>${panel.content}</div></section>`).join('')}
 </section>
-<div class="try-it"><strong>Then, try this</strong><p>“Use Writing Scaffold to write a post advocating for open borders”</p></div>
+<div class="try-it"><strong>Then, try this</strong><p>“Use the writing-scaffold mcp to write a story about a man named Gregorhumdampton”</p></div>
 </main>
 <footer><p>Public, read-only library. Requests, including their bodies, are logged.</p><nav class="footer-links" aria-label="Related links"><a href="https://github.com/ampdot-io/ai-detection-eval" target="_blank" rel="noreferrer">View on GitHub ↗</a><a href="/pangram-miss-benchmark.html" target="_blank" rel="noreferrer">More information ↗</a></nav></footer>
 <div id="copy-status" class="sr-only" role="status" aria-live="polite"></div>
